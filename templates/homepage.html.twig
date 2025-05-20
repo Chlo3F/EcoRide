@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<section class="hero">
+    <img src="{{ asset('./images/img-hero.jpg') }}" alt="Hero image" class="hero-image">
+    <div class="hero-content">
+        <h1>Le covoiturage électrique : éco-logique et économique!</h1>
+        <form class="search-bar">
+            <input type="text" placeholder="Départ">
+            <input type="text" placeholder="Arrivée">
+            <input type="date">
+            <button type="submit">Rechercher</button>
+        </form>
+    </div>
+</section>
+
+<section class="info-container">
+    
+    <div class="info">
+        <img src="{{ asset('./images/img1.jpg') }}" alt="Illustration" class="info-img">
+        <div class="info-text">
+        <h2>Ensemble, roulons vers un avenir plus vert!</h2>
+        <p>Bienvenue sur la plateforme de covoiturage dédiée à ceux
+            qui souhaitent voyager autrement : avec respect pour la
+            planète et leur budget. Nous croyons qu’il est possible de
+            réduire notre empreinte carbone tout en partageant des
+            moments conviviaux sur la route. EcoRide, c’est bien plus
+            qu’un moyen de se déplacer : c’est un engagement pour un
+            avenir durable.</p>
+        </div>    
+    </div>
+</section>
+<section class="avantages">
+    <div class="avantages-text">
+        <h3>Écologie au cœur des trajets</h3>
+        <p>Chez EcoRide, nous mettons l’accent sur les
+            véhicules à faible émission, en valorisant les
+            trajets en voiture électrique et hybride.
+            Ensemble, nous contribuons à la transition
+            écologique en favorisant un mode de
+            transport plus propre et plus responsable.
+            </p>
+    </div>
+    <div class="avantages-text">
+        <h3>Communauté et partage</h3>
+        <p>Faire du covoiturage, c’est bien plus que
+            partager une voiture. C’est créer des liens,
+            réduire les coûts de déplacement et
+            découvrir des personnes inspirantes qui
+            partagent vos valeurs.
+            
+            </p>
+    </div>
+    <div class="avantages-text">
+        <h3>Accessibilité et simplicité</h3>
+        <p>Notre plateforme est conçue pour vous offrir
+            une expérience intuitive. En quelques clics,
+            trouvez ou proposez un trajet, planifiez vos
+            déplacements et voyagez l’esprit tranquille.</p>
+    </div>
+</section>
+<section class="inscription">
+    <h2>Rejoignez le mouvement EcoRide et recevez 20 crédits !</h2>
+    <p>Que vous planifiez un long trajet ou un simple aller-retour quotidien,
+        EcoRide est là pour vous accompagner. Ensemble, faisons de chaque
+        déplacement une opportunité de protéger notre planète. Inscrivez-vous
+        dès aujourd’hui et devenez acteur du changement.</p>
+        <a href="inscription.html.twig"></a>S'inscrire</a>
+</section>
+{% endblock %}
