@@ -2,34 +2,20 @@
 
 {% block body %}
 <section class="hero">
-    <img src="{{ asset('./images/img-hero.jpg') }}" alt="Hero image" class="hero-image">
+    <img src="{{ asset('images/img-hero.jpg') }}" alt="Hero image" class="hero-image">
+    
     <div class="hero-content">
-        <h1>Le covoiturage électrique : éco-logique et économique!</h1>
+        <h1 class="hero-title">Le covoiturage électrique : éco-logique et économique!</h1>
+        
         <form class="search-bar">
             <input type="text" placeholder="Départ">
             <input type="text" placeholder="Arrivée">
             <input type="date">
-            <button type="submit">Rechercher</button>
+            <button type="submit" class="btn-recherche">Rechercher</button>
         </form>
     </div>
 </section>
 
-<section class="info-container">
-    
-    <div class="info">
-        <img src="{{ asset('./images/img1.jpg') }}" alt="Illustration" class="info-img">
-        <div class="info-text">
-        <h2>Ensemble, roulons vers un avenir plus vert!</h2>
-        <p>Bienvenue sur la plateforme de covoiturage dédiée à ceux
-            qui souhaitent voyager autrement : avec respect pour la
-            planète et leur budget. Nous croyons qu’il est possible de
-            réduire notre empreinte carbone tout en partageant des
-            moments conviviaux sur la route. EcoRide, c’est bien plus
-            qu’un moyen de se déplacer : c’est un engagement pour un
-            avenir durable.</p>
-        </div>    
-    </div>
-</section>
 <section class="avantages">
     <div class="avantages-text">
         <h3>Écologie au cœur des trajets</h3>
@@ -59,12 +45,35 @@
             déplacements et voyagez l’esprit tranquille.</p>
     </div>
 </section>
+
 <section class="inscription">
+   <div class="inscription-container"> 
     <h2>Rejoignez le mouvement EcoRide et recevez 20 crédits !</h2>
     <p>Que vous planifiez un long trajet ou un simple aller-retour quotidien,
         EcoRide est là pour vous accompagner. Ensemble, faisons de chaque
         déplacement une opportunité de protéger notre planète. Inscrivez-vous
         dès aujourd’hui et devenez acteur du changement.</p>
-        <a href="inscription.html.twig"></a>S'inscrire</a>
+   </div>
+   <div class="btn-inscription">
+    <a href="inscription.html.twig"></a>Je m'inscris!</a>
+   </div>     
 </section>
+
+<section class="info-container">
+    
+    <div class="info">
+        <img src="{{ asset('./images/img1.jpg') }}" alt="Illustration" class="info-img">
+        <div class="info-text">
+        <h2>Ensemble, roulons vers un avenir plus vert!</h2>
+        <p>Bienvenue sur la plateforme de covoiturage dédiée à ceux
+            qui souhaitent voyager autrement : avec respect pour la
+            planète et leur budget. Nous croyons qu’il est possible de
+            réduire notre empreinte carbone tout en partageant des
+            moments conviviaux sur la route. EcoRide, c’est bien plus
+            qu’un moyen de se déplacer : c’est un engagement pour un
+            avenir durable.</p>
+        </div>    
+    </div>
+</section>
+
 {% endblock %}
