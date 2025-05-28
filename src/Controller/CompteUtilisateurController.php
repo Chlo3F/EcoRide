@@ -6,78 +6,22 @@ use App\Entity\User;
 use App\Entity\Trajet;
 use App\Entity\Vehicule;
 use App\Entity\Preferences;
-use App\Form\TypeUtilisateurType;
-use App\Form\TrajetForm;
+use App\Form\TrajetFormType;
 use App\Form\VehiculeFormType;
+use App\Form\TypeUtilisateurFormType;
 use App\Form\PreferencesFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CompteUtilisateurController extends AbstractController
 {
-    #[Route('/utilisateur', name: 'compte_utilisateur')]
-    public function index(Request $request, EntityManagerInterface $em): Response
+    #[Route('/compte/vehicule', name: 'submit_vehicule', methods: ['POST'])]
+    public function submitVehicule(Request $request, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
-
-        if (!$user instanceof User) {
-            return $this->redirectToRoute('app_login');
-        }
-
-        $typeForm = $this->createForm(TypeUtilisateurType::class, $user);
-        $typeForm->handleRequest($request);
-
-        if ($typeForm->isSubmitted() && $typeForm->isValid()) {
-            $em->persist($user);
-            $em->flush();
-            return $this->redirectToRoute('compte_utilisateur'); // <-- important
-        }
-
-        $isConducteur = $user->getTypeUtilisateur() === 'conducteur';
-
-        // Initialisation
-        $vehiculeFormView = null;
-        $preferencesFormView = null;
-        $trajetFormView = null;
-        $hasVehicule = false;
-
-        if ($isConducteur) {
-            $vehiculeForm = $this->handleVehiculeForm($request, $em, $user);
-            if ($vehiculeForm instanceof Response) {
-                return $vehiculeForm;
-            }
-            $vehiculeFormView = $vehiculeForm;
-
-            $preferencesForm = $this->handlePreferencesForm($request, $em, $user);
-            if ($preferencesForm instanceof Response) {
-                return $preferencesForm;
-            }
-            $preferencesFormView = $preferencesForm;
-
-            [$trajetForm, $hasVehicule] = $this->handleTrajetForm($request, $em, $user);
-            if ($trajetForm instanceof Response) {
-                return $trajetForm;
-            }
-            $trajetFormView = $trajetForm;
-        }
-
-        return $this->render('compte_utilisateur.html.twig', [
-            'user' => $user,
-            'typeForm' => $typeForm->createView(),
-            'vehiculeForm' => $vehiculeFormView,
-            'preferencesForm' => $preferencesFormView,
-            'type' => $user->getTypeUtilisateur(),
-            'trajetForm' => $trajetFormView,
-            'hasVehicule' => $hasVehicule,
-        ]);
-    }
-
-    private function handleVehiculeForm(Request $request, EntityManagerInterface $em, User $user)
-    {
         $vehicule = new Vehicule();
         $form = $this->createForm(VehiculeFormType::class, $vehicule);
         $form->handleRequest($request);
@@ -86,76 +30,113 @@ class CompteUtilisateurController extends AbstractController
             $vehicule->setUser($user);
             $em->persist($vehicule);
             $em->flush();
-            return $this->redirectToRoute('compte_utilisateur', [], Response::HTTP_SEE_OTHER);
+
+            return new Response('<div class="alert alert-success">Véhicule enregistré !</div>');
         }
 
-        return $form->createView();
+        return $this->render('partials/_vehicule_form.html.twig', [
+            'vehiculeForm' => $form->createView()
+        ]);
     }
 
-    private function handlePreferencesForm(Request $request, EntityManagerInterface $em, User $user)
+    #[Route('/compte/preferences', name: 'submit_preferences', methods: ['POST'])]
+    public function submitPreferences(Request $request, EntityManagerInterface $em): Response
     {
-        $preferences = new Preferences();
+        $loggedUser = $this->getUser();
+
+        if (!$loggedUser instanceof User) {
+            // Ici, si tu es dans un contexte API ou tu as un objet UserInterface simplifié
+            // Il faut récupérer l'entité complète avec l'identifiant, par exemple email
+            $userIdentifier = $loggedUser->getUserIdentifier();
+
+            $user = $em->getRepository(User::class)->findOneBy(['email' => $userIdentifier]);
+
+            if (!$user) {
+                throw $this->createNotFoundException('Utilisateur non trouvé.');
+            }
+        } else {
+            $user = $loggedUser;
+        }
+
+        $preferences = $user->getPreferences()->first();
+
+        if (!$preferences) {
+            $preferences = new Preferences();
+            $preferences->setUser($user);
+        }
+
         $form = $this->createForm(PreferencesFormType::class, $preferences);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $preferences->setUser($user);
             $em->persist($preferences);
             $em->flush();
-            return $this->redirectToRoute('compte_utilisateur', [], Response::HTTP_SEE_OTHER);
+
+            return new Response('<div class="alert alert-success">Préférences enregistrées !</div>');
         }
 
-        return $form->createView();
+        return $this->render('partials/_preferences_form.html.twig', [
+            'preferencesForm' => $form->createView()
+        ]);
     }
 
-    private function handleTrajetForm(Request $request, EntityManagerInterface $em, User $user): array
+    #[Route('/compte/trajet', name: 'submit_trajet', methods: ['POST'])]
+    public function submitTrajet(Request $request, EntityManagerInterface $em): Response
     {
-        $vehicule = $em->getRepository(Vehicule::class)->findOneBy(['user' => $user]);
-
-        if (!$vehicule) {
-            return [null, false];
-        }
-
+        $user = $this->getUser();
         $trajet = new Trajet();
-        $trajet->setConducteur($user);
-        $trajet->setVehicule($vehicule);
 
-        $form = $this->createForm(TrajetForm::class, $trajet, [
-            'user' => $user,
+        $form = $this->createForm(TrajetFormType::class, $trajet, [
+            'user' => $user
         ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $trajet->setConducteur($user);
             $em->persist($trajet);
             $em->flush();
-            return [$this->redirectToRoute('compte_utilisateur', [], Response::HTTP_SEE_OTHER), true];
+
+            return new Response('<div class="alert alert-success">Trajet enregistré !</div>');
         }
 
-        return [$form->createView(), true];
+        return $this->render('partials/_trajet_form.html.twig', [
+            'trajetForm' => $form->createView()
+        ]);
     }
 
-    #[Route('/utilisateur/type', name: 'compte_type_change', methods: ['POST'])]
-     function ajaxUpdateType(Request $request, EntityManagerInterface $em): JsonResponse
+
+    #[Route('/compte', name: 'compte_utilisateur', methods: ['GET'])]
+    public function compte(EntityManagerInterface $em): Response
     {
-    $user = $this->getUser();
-    if (!$user instanceof User) {
-        return new JsonResponse(['error' => 'Non connecté'], 401);
+        $loggedUser = $this->getUser();
+
+        if (!$loggedUser instanceof User) {
+            // récupère l'entité User complète depuis la BDD via l'id ou email
+            // ici on suppose que getUserIdentifier() retourne un identifiant unique (email par ex)
+            $user = $em->getRepository(User::class)->findOneBy(['email' => $loggedUser->getUserIdentifier()]);
+
+            if (!$user) {
+                throw $this->createNotFoundException('Utilisateur non trouvé.');
+            }
+        } else {
+            $user = $loggedUser;
+        }
+
+        $typeForm = $this->createForm(TypeUtilisateurFormType::class);
+        $vehiculeForm = $this->createForm(VehiculeFormType::class);
+
+        $preferences = $user->getPreferences()->first() ?: null;
+        $preferencesForm = $this->createForm(PreferencesFormType::class, $preferences);
+
+        $trajetForm = $this->createForm(TrajetFormType::class, null, [
+            'user' => $user,
+        ]);
+
+        return $this->render('compte_utilisateur.html.twig', [
+            'typeForm' => $typeForm,
+            'vehiculeForm' => $vehiculeForm,
+            'preferencesForm' => $preferencesForm,
+            'trajetForm' => $trajetForm,
+        ]);
     }
-
-    $data = json_decode($request->getContent(), true);
-    if (!isset($data['typeUtilisateur'])) {
-        return new JsonResponse(['error' => 'Type manquant'], 400);
-    }
-
-    $type = $data['typeUtilisateur'];
-    if (!in_array($type, ['conducteur', 'passager'])) {
-        return new JsonResponse(['error' => 'Type invalide'], 400);
-    }
-
-    $user->setTypeUtilisateur($type);
-    $em->flush();
-
-    return new JsonResponse(['success' => true]);
-  }
-
 }
