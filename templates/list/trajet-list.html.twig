@@ -1,0 +1,12 @@
+<div class="trajets-list">
+    {% for trajet in trajets %}
+        <div class="trajet-card">
+            <strong>{{ trajet.villeDepart }} → {{ trajet.villeArrivee }}</strong>
+            <p>Départ : {{ trajet.dateHeureDepart|date('d/m H:i') }}</p>
+            <p>Places : {{ trajet.placesDisponibles }}</p>
+            <p>Électrique : {{ trajet.energieElectrique ? 'Oui' : 'Non' }}</p>
+        </div>
+    {% else %}
+        <p>Aucun trajet proposé</p>
+    {% endfor %}
+</div>

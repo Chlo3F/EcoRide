@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Compte - Ecoride{% endblock %}
+
+{% block body %}
+<div class="container">
+
+    <a href="{{ path('app_logout') }}">Me déconnecter</a>
+
+    <!-- Section Profil Utilisateur -->
+    <section class="profil">
+        <div class="profil-info">
+            <!-- Avatar avec aperçu -->
+            <label for="avatar-upload" class="avatar-label">
+                <img id="avatar-preview" src="{{ asset('images/icon electrique.png') }}" alt="Avatar" class="avatar">
+            </label>
+            <input type="file" id="avatar-upload" accept="image/*" style="display: none;">
+
+            <div>
+                <h2>Bonjour {{ app.user.prenom }} !</h2>
+                <p>⭐ 0/5 - 0 Avis</p>
+            </div>
+        </div>
+
+        <div class="credits">
+            <span>{{ app.user.credits }}</span>
+            <p>Crédits</p>
+        </div>
+    </section>
+
+<div class="container my-5">
+    {{ form_start(typeForm) }}
+        <div id="type-utilisateur-radios">
+            {{ form_row(typeForm.typeUtilisateur) }}
+        </div>
+    {{ form_end(typeForm) }}
+
+    <div id="conducteur-form-section" class="hidden">
+        {% if vehiculeForm is defined and vehiculeForm is not null %}
+            {{ form_start(vehiculeForm) }}
+                {{ form_widget(vehiculeForm) }}
+            {{ form_end(vehiculeForm) }}
+        {% endif %}
+        {% if preferencesForm is defined and preferencesForm is not null %}
+            {{ form_start(preferencesForm) }}
+                {{ form_widget(preferencesForm) }}
+            {{ form_end(preferencesForm) }}
+        {% endif %}
+        {% if trajetForm is defined and trajetForm is not null %}
+            {{ form_start(trajetForm) }}
+                {{ form_widget(trajetForm) }}
+            {{ form_end(trajetForm) }}
+        {% endif %}
+    </div>
+
+    <div id="passager-form-section" class="hidden">
+        <p>Bienvenue passager ! Vous pourrez bientôt réserver un trajet.</p>
+        <a href="{{ path('homepage') }}" class="btn btn-info btn-lg">Chercher un covoiturage</a>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const radios = document.querySelectorAll('input[name="type_utilisateur[typeUtilisateur]"]');
+    const conducteurSection = document.getElementById('conducteur-form-section');
+    const passagerSection = document.getElementById('passager-form-section');
+
+    radios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            const type = e.target.value;
+
+            // Envoi AJAX vers /utilisateur/type
+            fetch('{{ path('compte_type_change') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ typeUtilisateur: type })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Affichage dynamique
+                    if (type === 'conducteur') {
+                        conducteurSection.classList.remove('hidden');
+                        passagerSection.classList.add('hidden');
+                    } else {
+                        conducteurSection.classList.add('hidden');
+                        passagerSection.classList.remove('hidden');
+                    }
+                } else {
+                    alert(data.error || 'Erreur lors du changement de type.');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Erreur serveur.');
+            });
+        });
+    });
+
+    // Affichage initial
+    const checked = document.querySelector('input[name="type_utilisateur[typeUtilisateur]"]:checked');
+    if (checked) {
+        checked.dispatchEvent(new Event('change'));
+    }
+});
+</script>
+
+{% endblock %}

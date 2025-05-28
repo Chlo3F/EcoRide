@@ -2,7 +2,11 @@
 
 namespace App\Entity;
 
+use App\Entity\Vehicule;
+use App\Entity\Preferences;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -67,6 +71,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     
     #[Ignore]
     private ?string $plainPassword = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $typeUtilisateur = null; // 'conducteur' ou 'passager'
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Vehicule::class, cascade: ['persist', 'remove'])]
+    private Collection $vehicules;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Preferences::class, cascade: ['persist', 'remove'])]
+    private Collection $preferences;
+
+    #[ORM\OneToMany(mappedBy: 'conducteur', targetEntity: Trajet::class)]
+    private Collection $trajets;
+
+
+    public function __construct()
+    {
+        $this->vehicules = new ArrayCollection();
+        $this->preferences = new ArrayCollection();
+        $this->trajets = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -179,6 +203,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+
     /**
      * @see UserInterface
      */
@@ -186,5 +211,96 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
          $this->plainPassword = null;
+    }
+
+    public function getTypeUtilisateur(): ?string
+    {
+        return $this->typeUtilisateur;
+    }
+
+    public function setTypeUtilisateur(?string $typeUtilisateur): self
+    {
+        $this->typeUtilisateur = $typeUtilisateur;
+        return $this;
+    }
+
+    public function getVehicules(): Collection
+    {
+        return $this->vehicules;
+    }
+
+    public function addVehicule(Vehicule $vehicule): static
+    {
+        if (!$this->vehicules->contains($vehicule)) {
+            $this->vehicules[] = $vehicule;
+            $vehicule->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVehicule(Vehicule $vehicule): static
+    {
+        if ($this->vehicules->removeElement($vehicule)) {
+            if ($vehicule->getUser() === $this) {
+                $vehicule->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    // Preferences
+    public function getPreferences(): Collection
+    {
+        return $this->preferences;
+    }
+
+    public function addPreference(Preferences $preference): static
+    {
+        if (!$this->preferences->contains($preference)) {
+            $this->preferences[] = $preference;
+            $preference->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePreference(Preferences $preference): static
+    {
+        if ($this->preferences->removeElement($preference)) {
+            if ($preference->getUser() === $this) {
+                $preference->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+  
+    public function getTrajets(): Collection
+    {
+        return $this->trajets;
+    }
+
+    public function addTrajet(Trajet $trajet): static
+    {
+        if (!$this->trajets->contains($trajet)) {
+        $this->trajets->add($trajet);
+        $trajet->setConducteur($this);
+    }
+
+        return $this;
+    }
+
+    public function removeTrajet(Trajet $trajet): static
+    {
+        if ($this->trajets->removeElement($trajet)) {
+            if ($trajet->getConducteur() === $this) {
+                $trajet->setConducteur(null);
+        }
+    }
+
+        return $this;
     }
 }

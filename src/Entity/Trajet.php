@@ -36,6 +36,13 @@ class Trajet
 
     #[ORM\ManyToOne(inversedBy: 'trajets')]
     private ?User $conducteur = null;
+    
+    #[ORM\ManyToOne]
+    private ?Vehicule $vehicule = null;
+
+
+    #[ORM\Column(length: 20, options: ['default' => 'prévu'])]
+    private ?string $statut = 'prévu'; // prévu | en cours | terminé | annulé
 
     public function getId(): ?int
     {
@@ -134,6 +141,31 @@ class Trajet
     public function setConducteur(?User $conducteur): static
     {
         $this->conducteur = $conducteur;
+
+        return $this;
+    }
+
+    public function getVehicule(): ?Vehicule
+    {
+        return $this->vehicule;
+    }
+
+    public function setVehicule(?Vehicule $vehicule): static
+    {
+        $this->vehicule = $vehicule;
+
+        return $this;
+    }
+
+
+    public function getStatut(): ?string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(string $statut): static
+    {
+        $this->statut = $statut;
 
         return $this;
     }
