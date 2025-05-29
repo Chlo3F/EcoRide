@@ -1,4 +1,36 @@
-<form id="trajet-form" data-url="{{ path('submit_trajet') }}">
-    {{ form_widget(trajetForm) }}
-    <button type="submit" class="btn btn-primary mt-2">Sauvegarder trajet</button>
-</form>
+<div class="card shadow-sm h-100">
+    <div class="card-header bg-success text-white">Ajouter un trajet</div>
+    <div class="card-body">
+        {{ form_start(trajetForm, {
+            'attr': {
+                'data-url': path('submit_trajet'),
+                'id': 'trajetForm',
+                'novalidate': 'novalidate'
+            }
+        }) }}
+
+        {{ form_row(trajetForm.vehicule) }}
+        {{ form_row(trajetForm.villeDepart) }}
+        {{ form_row(trajetForm.villeArrivee) }}
+        {{ form_row(trajetForm.dateHeureDepart) }}
+        {{ form_row(trajetForm.placesDisponibles) }}
+        {{ form_row(trajetForm.credits) }}
+
+        <div class="form-check form-switch mt-3 mb-3">
+            {{ form_widget(trajetForm.energieElectrique, {
+                'attr': {'class': 'form-check-input'}
+            }) }}
+            {{ form_label(trajetForm.energieElectrique, null, {
+                'label_attr': {'class': 'form-check-label'}
+            }) }}
+        </div>
+
+        <button type="submit" class="btn btn-success mt-3">Valider Trajet</button>
+
+        {{ form_end(trajetForm) }}
+
+        {% if message is defined %}
+            <div class="alert alert-success mt-3">{{ message }}</div>
+        {% endif %}
+    </div>
+</div>

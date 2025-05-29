@@ -1,6 +1,6 @@
 /* Compte utilisateur */
-.hidden {
-    display: none !important; 
+#formulaires-conducteur {
+    display: none; /* ou 'none' si tu veux le cacher au début */
 }
 
 /* Profil */
@@ -86,4 +86,44 @@
     .toggle-btn, .add-pref-btn, .valider-btn, .valider-pref-btn {
         width: 100%;
     }
+}
+
+.fade-in {
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animated-section {
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+.animated-section.visible {
+    opacity: 1;
+}
+.avatar {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #dee2e6;
+    cursor: pointer;
+}
+.profil-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.credits {
+    margin-top: 1rem;
 }

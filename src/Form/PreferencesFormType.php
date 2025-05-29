@@ -25,6 +25,7 @@ class PreferencesFormType extends AbstractType
             ->add('autre', TextareaType::class, [
                 'label' => 'Autres préférences',
                 'required' => false,
+                'empty_data' => '',
             ]);
         
     }

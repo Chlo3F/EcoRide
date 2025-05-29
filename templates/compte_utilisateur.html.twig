@@ -3,7 +3,7 @@
 {% block title %}Mon Compte - Ecoride{% endblock %}
 
 {% block body %}
-<div class="container">
+
 
     <a href="{{ path('app_logout') }}">Me déconnecter</a>
 
@@ -28,121 +28,47 @@
         </div>
     </section>
 
-   <div class="container my-5">
-    {{ form_start(typeForm) }}
-    <div id="type-utilisateur-radios">
-        {{ form_row(typeForm.typeUtilisateur) }}
-    </div>
-    {{ form_end(typeForm) }}
-    <div id="{{ typeForm.vars.id }}-result" class="form-result"></div>
-
-    <div id="conducteur-form-section" >
-        {% if vehiculeForm is defined and vehiculeForm is not null %}
-            {{ form_start(vehiculeForm, {'attr': {'data-url': path('submit_vehicule')}}) }}
-            {{ form_widget(vehiculeForm) }}
-            <button type="submit" class="valider-btn">Valider mon véhicule</button>
-            {{ form_end(vehiculeForm) }}
-            <div id="{{ vehiculeForm.vars.id }}-result" class="form-result"></div>
-        {% endif %}
-
-        {% if preferencesForm is defined and preferencesForm is not null %}
-            {{ form_start(preferencesForm, {'attr': {'data-url': path('submit_preferences')}}) }}
-            {{ form_widget(preferencesForm) }}
-            <button type="submit" class="valider-btn">Valider mes préférences</button>
-            {{ form_end(preferencesForm) }}
-            <div id="{{ preferencesForm.vars.id }}-result" class="form-result"></div>
-        {% endif %}
-
-        {% if trajetForm is defined and trajetForm is not null %}
-            {{ form_start(trajetForm, {'attr': {'data-url': path('submit_trajet')}}) }}
-            {{ form_widget(trajetForm) }}
-            <button type="submit" class="valider-btn">Valider mon Trajet</button>
-            {{ form_end(trajetForm) }}
-            <div id="{{ trajetForm.vars.id }}-result" class="form-result"></div>
-        {% endif %}
+    <div class="d-flex justify-content-center mb-3">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="type_utilisateur" id="conducteur" value="conducteur">
+            <label class="form-check-label" for="conducteur">Conducteur</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="type_utilisateur" id="passager" value="passager">
+            <label class="form-check-label" for="passager">Passager</label>
+        </div>
     </div>
 
-    <div id="passager-form-section">
-        <p>Bienvenue passager ! Vous pourrez bientôt réserver un trajet.</p>
-        <a href="{{ path('homepage') }}" class="btn btn-info btn-lg">Chercher un covoiturage</a>
+    {# Section conducteur #}
+    <div id="formulaires-conducteur" class="formualire mt-4"style="display: none;">
+    <div class="row g-4">
+        <div class="col-md-6">
+            {% include 'partials/_vehicule_form.html.twig' %}
+        </div>
+        <div class="col-md-6">
+            {% include 'partials/_preferences_form.html.twig' %}
+        </div>
+        <div class="col-md-12">
+            {% include 'partials/_trajet_form.html.twig' %}
+        </div>
+    </div>
+</div>
+
+    {# Section passager #}
+<div id="passager-section" class="hidden mt-5">
+    <div class="text-center">
+        <div class="alert alert-info d-inline-block">
+            Bienvenue passager ! Vous pourrez bientôt réserver un trajet.
+        </div>
+        <div class="mt-3 mb-5">
+            <a href="{{ path('homepage') }}" class="btn btn-info">Chercher un covoiturage</a>
+        </div>
     </div>
 </div>
 
 
+<script src="{{ asset('js/compte.js') }}"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const forms = document.querySelectorAll('form[data-url]');
 
-        forms.forEach(form => {
-            form.addEventListener('submit', e => {
-                e.preventDefault();
 
-                const url = form.dataset.url;
-                const formData = new FormData(form);
-
-                fetch(url, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(res => {
-                    if (!res.ok) throw new Error('Erreur réponse serveur');
-                    return res.text();
-                })
-                .then(html => {
-                    const resultId = `${form.id}-result`;
-                    const resultContainer = document.getElementById(resultId);
-
-                    if (resultContainer) {
-                        resultContainer.innerHTML = html;
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert('Erreur lors de la soumission du formulaire.');
-                });
-            });
-        });
-    });
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Sélecteurs des sections
-        const conducteurSection = document.getElementById('conducteur-form-section');
-        const passagerSection = document.getElementById('passager-form-section');
-
-        // Sélecteurs des radios de type utilisateur
-        const radios = document.querySelectorAll('#type-utilisateur-radios input[type="radio"]');
-
-        function toggleSections(value) {
-            if (value === 'conducteur') {
-                conducteurSection.classList.remove('hidden');
-                passagerSection.classList.add('hidden');
-            } else if (value === 'passager') {
-                passagerSection.classList.remove('hidden');
-                conducteurSection.classList.add('hidden');
-            } else {
-                // Valeur non attendue, tout cacher
-                passagerSection.classList.add('hidden');
-                conducteurSection.classList.add('hidden');
-            }
-        }
-
-        // Init state based on selected radio
-        radios.forEach(radio => {
-            if (radio.checked) {
-                toggleSections(radio.value);
-            }
-
-            radio.addEventListener('change', () => {
-                toggleSections(radio.value);
-            });
-        });
-    });
-</script>
-    
     {% endblock %}

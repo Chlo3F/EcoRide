@@ -1,4 +1,35 @@
-<form id="vehicule-form" data-url="{{ path('submit_vehicule') }}">
-    {{ form_widget(vehiculeForm) }}
-    <button type="submit" class="btn btn-primary mt-2">Sauvegarder véhicule</button>
-</form>
+<div class="card shadow-sm h-100">
+    <div class="card-header bg-primary text-white">Ajouter un véhicule</div>
+    <div class="card-body">
+        {{ form_start(vehiculeForm, {'attr': {
+            'data-url': path('submit_vehicule'),
+            'id': 'vehiculeForm',
+            'novalidate': 'novalidate'}}) }}
+
+        {{ form_row(vehiculeForm.marque) }}
+        {{ form_row(vehiculeForm.modele) }}
+        {{ form_row(vehiculeForm.couleur) }}
+        {{ form_row(vehiculeForm.immatriculation) }}
+        {{ form_row(vehiculeForm.datePremiereImmat) }}
+        {{ form_row(vehiculeForm.nbrPlaces) }}
+
+        <div class="form-check form-switch mt-3">
+            {{ form_widget(vehiculeForm.electrique, {
+                'attr': {'class': 'form-check-input'}
+            }) }}
+            {{ form_label(vehiculeForm.electrique, null, {
+                'label_attr': {'class': 'form-check-label'}
+            }) }}
+        </div>
+
+        <button type="submit" class="btn btn-success mt-4">Ajouter véhicule</button>
+
+        {{ form_end(vehiculeForm) }}
+
+        {% if message is defined %}
+            <div class="alert alert-success mt-3">{{ message }}</div>
+        {% endif %}
+    </div>
+</div>
+
+

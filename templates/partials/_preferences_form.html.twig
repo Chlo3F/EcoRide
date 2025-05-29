@@ -1,5 +1,38 @@
+<div class="card shadow-sm h-100">
+    <div class="card-header bg-secondary text-white">Mes préférences</div>
+    <div class="card-body">
+        {{ form_start(preferencesForm, {'attr': {'novalidate': 'novalidate'}}) }}
 
-<form id="preferences-form" data-url="{{ path('submit_preferences') }}">
-    {{ form_widget(preferencesForm) }}
-    <button type="submit" class="btn btn-primary mt-2">Sauvegarder préférences</button>
-</form>
+        {# Affiche chaque champ sauf le token #}
+        {% for field in preferencesForm %}
+            {% if field.vars.name != '_token' %}
+
+                {% if field.vars.block_prefixes|last == 'choice' and field.vars.expanded %}
+                    <div class="mb-3">
+                        <label class="form-label">{{ field.vars.label }}</label><br>
+                        <div class="btn-group d-flex flex-wrap" role="group">
+                            {% for choice in field %}
+                                <div class="form-check form-check-inline me-3">
+                                    {{ form_widget(choice, {'attr': {'class': 'form-check-input'}}) }}
+                                    {{ form_label(choice, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% else %}
+                    {{ form_row(field) }}
+                {% endif %}
+
+            {% endif %}
+        {% endfor %}
+
+        <button type="submit" class="btn btn-secondary mt-3">Enregistrer préférences</button>
+
+        {{ form_end(preferencesForm) }}
+
+        {% if message is defined %}
+            <div class="alert alert-success mt-3">{{ message }}</div>
+        {% endif %}
+    </div>
+</div>
+
