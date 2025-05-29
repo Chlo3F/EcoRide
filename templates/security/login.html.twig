@@ -41,4 +41,42 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector("form");
+        const emailInput = document.getElementById("username");
+        const passwordInput = document.getElementById("password");
+
+        form.addEventListener("submit", function (e) {
+            // On supprime les anciens messages d'erreur
+            document.querySelectorAll(".text-danger").forEach(el => el.remove());
+
+            let valid = true;
+
+            // Validation email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailInput.value)) {
+                showError(emailInput, "Veuillez entrer une adresse email valide.");
+                valid = false;
+            }
+
+            // Validation mot de passe
+            if (passwordInput.value.trim() === "") {
+                showError(passwordInput, "Veuillez entrer votre mot de passe.");
+                valid = false;
+            }
+
+            if (!valid) {
+                e.preventDefault(); // Empêche l'envoi du formulaire
+            }
+        });
+
+        function showError(input, message) {
+            const error = document.createElement("div");
+            error.className = "text-danger mt-1";
+            error.innerText = message;
+            input.parentNode.appendChild(error);
+        }
+    });
+</script>
 {% endblock %}
