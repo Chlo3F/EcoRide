@@ -1,5 +1,6 @@
 name: app
 type: 'php:8.2'
+disk: 1024
 
 build:
   flavor: none
