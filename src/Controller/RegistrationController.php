@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Security\AppAuthenticator;
+
 
 class RegistrationController extends AbstractController
 {
@@ -38,7 +40,7 @@ class RegistrationController extends AbstractController
 
             // do anything else you need here, like send an email
 
-            return $security->login($user, 'form_login', 'main');
+            return $security->login($user, AppAuthenticator::class, 'main');
         }
 
         return $this->render('registration/register.html.twig', [

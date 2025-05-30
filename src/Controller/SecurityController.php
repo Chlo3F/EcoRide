@@ -33,13 +33,5 @@ class SecurityController extends AbstractController
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
-    #[Route('/check-password')]
-    public function checkPassword(UserPasswordHasherInterface $hasher, EntityManagerInterface $em): Response
-    {
-        $user = $em->getRepository(User::class)->findOneBy(['email' => 'admin.ecoride@gmail.com']);
-        $result = $hasher->isPasswordValid($user, 'Ecoride25');
-
-        return new Response($result ? '✅ Mot de passe valide' : '❌ Mot de passe invalide');
-    }
 
 }

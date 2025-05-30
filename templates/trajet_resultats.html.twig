@@ -1,31 +1,92 @@
 {% extends 'base.html.twig' %}
+{% set show_navbar = false %}
+
+{% block title %}Résultats de recherche{% endblock %}
+
 {% block body %}
-<h2 class="mb-4">Résultats</h2>
-<div class="row">
-    {% for trajet in trajets %}
-        <div class="col-md-6 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">{{ trajet.villeDepart }} → {{ trajet.villeArrivee }}</h5>
-                    <p class="card-text">
-                        Départ : {{ trajet.dateHeureDepart|date('d/m/Y H:i') }}<br>
-                        Arrivée : {{ trajet.dateHeureArrivee|date('d/m/Y H:i') }}<br>
-                        Places disponibles : {{ trajet.placesDisponibles }}<br>
-                        Crédits : {{ trajet.credits }}<br>
-                        Conducteur : {{ trajet.conducteur.nom }} {{ trajet.conducteur.prenom }}
-                    </p>
-                    {% if trajet.energieElectrique %}
-                        <span class="badge bg-success">Électrique</span>
-                    {% endif %}
+<a class="brand" href="{{ path('homepage') }}">
+    <img src="{{ asset('images/logo.png') }}" alt="logo" class="logo">
+</a>
+<div class="container py-5">
+
+    <form class="row g-3 align-items-end mb-5" action="{{ path('trajet_recherche') }}" method="get">
+        <div class="col-md-3">
+            <label for="villeDepart" class="form-label">Départ</label>
+            <input type="text" class="form-control" id="villeDepart" name="villeDepart" value="{{ app.request.get('villeDepart') }}">
+        </div>
+        <div class="col-md-3">
+            <label for="villeArrivee" class="form-label">Arrivée</label>
+            <input type="text" class="form-control" id="villeArrivee" name="villeArrivee" value="{{ app.request.get('villeArrivee') }}">
+        </div>
+        <div class="col-md-2">
+            <label for="date" class="form-label">Date</label>
+            <input type="date" class="form-control" id="date" name="date" value="{{ app.request.get('date') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Voiture électrique</label>
+            <select name="electrique" class="form-select">
+                <option value="">Peu importe</option>
+                <option value="1">Oui</option>
+                <option value="0">Non</option>
+            </select>
+        </div>
+        <div class="col-md-2 d-grid">
+            <button type="submit" class="btn btn-primary">Filtrer</button>
+        </div>
+    </form>
+
+    <h2 class="mb-4">Résultats</h2>
+
+    <div class="row">
+        {% for trajet in trajets %}
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body d-flex flex-column justify-content-between">
+
+                        <div class="d-flex justify-content-between">
+                            <!-- Partie gauche : infos trajet -->
+                            <div>
+                                <h5 class="card-title">{{ trajet.villeDepart }} → {{ trajet.villeArrivee }}</h5>
+                                <p class="mb-2">
+                                    <strong>Départ :</strong> {{ trajet.dateHeureDepart|date('d/m/Y H:i') }}<br>
+                                    <strong>Arrivée :</strong> {{ trajet.dateHeureArrivee|date('d/m/Y H:i') }}
+                                </p>
+                            </div>
+
+                            <!-- Partie droite : infos secondaires -->
+                            <div class="text-end">
+                                <p class="mb-1"><strong>Conducteur :</strong><br>
+                                    {{ trajet.conducteur.prenom }} {{ trajet.conducteur.nom }}</p>
+                                <p class="mb-1">
+                                    <strong>Places :</strong> {{ trajet.placesDisponibles }}<br>
+                                    <strong>Crédits :</strong> {{ trajet.credits }}
+                                </p>
+                                {% if trajet.energieElectrique %}
+                                    <span class="badge bg-success">Électrique</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Bouton en bas centré -->
+                        <div class="d-flex justify-content-center mt-4">
+                            <a href="#" class="btn btn-info">Réserver</a>
+                        </div>
+
+                    </div>
                 </div>
             </div>
-        </div>
-    {% else %}
-        <p>Aucun trajet trouvé.</p>
-    {% endfor %}
-    <div class="d-flex justify-content-center">
-    {{ knp_pagination_render(trajets) }}
-</div>
+        {% else %}
+            <div class="col-12">
+                <p class="text-center">Aucun trajet trouvé.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center mt-4">
+        {{ knp_pagination_render(trajets) }}
+    </div>
 
 </div>
 {% endblock %}
+

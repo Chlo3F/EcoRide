@@ -10,7 +10,6 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
@@ -20,30 +19,42 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
 
     public const LOGIN_ROUTE = 'app_login';
 
-    public function __construct(private UrlGeneratorInterface $urlGenerator) {}
+    private UrlGeneratorInterface $urlGenerator;
+
+    public function __construct(UrlGeneratorInterface $urlGenerator)
+    {
+        $this->urlGenerator = $urlGenerator;
+    }
 
     public function authenticate(Request $request): Passport
     {
         $email = $request->request->get('email', '');
+        $password = $request->request->get('password', '');
+        $csrfToken = $request->request->get('_csrf_token');
 
         return new Passport(
             new UserBadge($email),
-            new PasswordCredentials($request->request->get('password', '')),
+            new PasswordCredentials($password),
             [
-                new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
+                new CsrfTokenBadge('authenticate', $csrfToken),
             ]
         );
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?RedirectResponse
     {
+        // Redirection personnalisée selon le rôle
         $roles = $token->getRoleNames();
 
-        if (in_array('ROLE_ADMIN', $roles)) {
+        if (in_array('ROLE_ADMIN', $roles, true)) {
             return new RedirectResponse($this->urlGenerator->generate('admin_dashboard'));
-        } // elseif (in_array('ROLE_EMPLOYE', $roles)) {
-            //return new RedirectResponse($this->urlGenerator->generate('{employe_home}'));}
+        }
 
+        //Actualiser lorsque dashboard employé crée
+        //if (in_array('ROLE_EMPLOYE', $roles, true)) {
+           // return new RedirectResponse($this->urlGenerator->generate('employe_dashboard')); }
+
+        // Redirection par défaut (utilisateur simple)
         return new RedirectResponse($this->urlGenerator->generate('compte_utilisateur'));
     }
 
