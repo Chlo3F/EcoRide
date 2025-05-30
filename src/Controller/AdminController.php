@@ -24,7 +24,9 @@ class AdminController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setRoles(['ROLE_EMPLOYE']);
-            $user->setPassword($hasher->hashPassword($user, $user->getPassword()));
+            $hashedPassword = $hasher->hashPassword($user, $user->getPlainPassword());
+            $user->setPassword($hashedPassword);
+            
             $em->persist($user);
             $em->flush();
 

@@ -1,5 +1,5 @@
 /* Compte utilisateur */
-#formulaires-conducteur {
+.formulaire {
     display: none; /* ou 'none' si tu veux le cacher au début */
 }
 
