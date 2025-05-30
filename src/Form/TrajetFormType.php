@@ -42,7 +42,9 @@ class TrajetFormType extends AbstractType
             ->add('dateHeureDepart', DateTimeType::class, [
                 'widget' => 'single_text',
             ])
-
+            ->add('dateHeureArrivee', DateTimeType::class, [
+                'widget' => 'single_text',
+            ])
             ->add('placesDisponibles', IntegerType::class, [
                 'constraints' => [
                     new Assert\Positive(),
