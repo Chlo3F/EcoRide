@@ -1,17 +1,15 @@
-
 ###> symfony/framework-bundle ###
 /.env
-/env
-/.env.local
-/.env.local.php
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
+/config/secrets/prod/*.key
+/config/secrets/dev/dev.decrypt.private.php
+/config/secrets/*.local.php
 /public/bundles/
+/public/assets/
 /var/
 /vendor/
 /.env.docker
-/env.docker
-
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###
@@ -25,11 +23,14 @@
 ###< symfony/phpunit-bridge ###
 
 ###> symfony/asset-mapper ###
-/public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
 
-###> php test ###
+###> tests ###
 /tests/
+###< tests ###
 
+###> IDE ###
 .vscode/
+.idea/
+###< IDE ###

@@ -1,0 +1,41 @@
+name: app
+type: 'php:8.2'
+
+build:
+    flavor: none
+
+dependencies:
+    php:
+        composer/composer: '^2'
+
+web:
+    locations:
+        '/':
+            root: 'public'
+            index: 'index.php'
+            passthru: '/index.php'
+
+mounts:
+    '/var/uploads': 'shared:files'
+
+relationships:
+    database: 'db:mysql'
+
+hooks:
+    build: |
+        composer install --no-dev --optimize-autoloader
+        php bin/console assets:install public
+        php bin/console cache:clear
+    deploy: |
+        php bin/console doctrine:migrations:migrate --no-interaction
+
+crons:
+    clear-cache:
+        spec: '0 4 * * *'
+        cmd: 'php bin/console cache:clear'
+
+variables:
+    env:
+        APP_ENV: 'prod'
+        APP_SECRET: ''
+

@@ -1,0 +1,33 @@
+# Ignorer le dossier git
+.git
+.gitignore
+
+# Ignorer les fichiers et dossiers de dev
+/tests/
+/tests
+/phpunit.xml
+/phpunit.result.cache
+
+# Ignorer les fichiers d'environnement locaux (variables sensibles)
+.env
+.env.local
+.env.docker
+.env.*.local
+
+# Ignorer les caches et logs Symfony
+/var/
+/var/cache/
+/var/log/
+/var/sessions/
+
+# Ignorer les dépendances locales (elles seront installées via composer dans l'image)
+/vendor/
+/node_modules/
+
+# Ignorer les assets compilés qui seront générés dans le container
+/public/assets/
+
+# Ignorer les fichiers IDE et config locale
+/.vscode/
+/.idea/
+.DS_Store
