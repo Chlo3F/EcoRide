@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<h2 class="mb-4">Résultats</h2>
+<div class="row">
+    {% for trajet in trajets %}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ trajet.villeDepart }} → {{ trajet.villeArrivee }}</h5>
+                    <p class="card-text">
+                        Départ : {{ trajet.dateHeureDepart|date('d/m/Y H:i') }}<br>
+                        Arrivée : {{ trajet.dateHeureArrivee|date('d/m/Y H:i') }}<br>
+                        Places disponibles : {{ trajet.placesDisponibles }}<br>
+                        Crédits : {{ trajet.credits }}<br>
+                        Conducteur : {{ trajet.conducteur.nom }} {{ trajet.conducteur.prenom }}
+                    </p>
+                    {% if trajet.energieElectrique %}
+                        <span class="badge bg-success">Électrique</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p>Aucun trajet trouvé.</p>
+    {% endfor %}
+    <div class="d-flex justify-content-center">
+    {{ knp_pagination_render(trajets) }}
+</div>
+
+</div>
+{% endblock %}

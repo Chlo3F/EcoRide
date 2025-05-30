@@ -8,12 +8,36 @@
     <div class="hero-content">
         <h1 class="hero-title">Le covoiturage électrique : éco-logique et économique!</h1>
         
-        <form class="search-bar">
-            <input type="text" placeholder="Départ">
-            <input type="text" placeholder="Arrivée">
-            <input type="date">
-            <button type="submit" class="btn-recherche">Rechercher</button>
-        </form>
+       <form class="row g-2 align-items-end mb-4" action="{{ path('trajet_recherche') }}" method="get">
+    <div class="col-md-3">
+        <label for="villeDepart" class="form-label">Départ</label>
+        <input type="text" class="form-control" id="villeDepart" name="villeDepart" placeholder="Ville de départ">
+    </div>
+    <div class="col-md-3">
+        <label for="villeArrivee" class="form-label">Arrivée</label>
+        <input type="text" class="form-control" id="villeArrivee" name="villeArrivee" placeholder="Ville d'arrivée">
+    </div>
+    <div class="col-md-3">
+        <label for="date" class="form-label">Date</label>
+        <input type="date" class="form-control" id="date" name="date">
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Voiture électrique</label>
+        <select name="electrique" class="form-select">
+            <option value="">Peu importe</option>
+            <option value="1">Oui</option>
+            <option value="0">Non</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="dureeMax" class="form-label">Durée max (min)</label>
+        <input type="number" min="1" class="form-control" id="dureeMax" name="dureeMax" placeholder="Ex: 90">
+    </div>
+    <div class="col-md-1">
+        <button type="submit" class="btn btn-primary w-100">Rechercher</button>
+    </div>
+</form>
+
     </div>
 </section>
 
