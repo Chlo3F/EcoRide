@@ -9,6 +9,8 @@
 /public/bundles/
 /var/
 /vendor/
+/.env.docker
+/env.docker
 
 ###< symfony/framework-bundle ###
 
@@ -26,3 +28,8 @@
 /public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
+
+###> php test ###
+/tests/
+
+.vscode/
